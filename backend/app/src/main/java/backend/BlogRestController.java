@@ -18,17 +18,17 @@ public class BlogRestController {
     @Autowired
     private BlogDatabase blogDatabase;
 
-    @GetMapping("/blog/{id}")
+    @GetMapping("/api/blog/{id}")
     public Blog getBlog(@PathVariable long id) {
         return blogDatabase.getBlog(id);
     }
 
-    @GetMapping("/blogs")
+    @GetMapping("/api/blogs")
     public Collection<Blog> getBlogs() {
         return blogDatabase.getBlogs().values();
     }
 
-    @PostMapping("/blog")
+    @PostMapping("/api/blog")
     public Blog postBlog(@RequestBody Blog blog) {
         return blog;
     }

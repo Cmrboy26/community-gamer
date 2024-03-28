@@ -8,7 +8,7 @@ body {
 }
 
 .navbar {
-  background-color:aliceblue;
+  background-color:rgb(174, 217, 255);
   padding: 30px;
   display: flex;
 }

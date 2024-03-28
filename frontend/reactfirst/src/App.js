@@ -5,11 +5,14 @@ import './App.css';
 import Home from './pages/Home';
 import Search from './pages/Search';
 
+const API_URL = "http://localhost:8080/api/";
+
 const Main = () => {
   return (
     <Routes>
       <Route exact path="/home" element={<Home />} />
       <Route exact path="/search" element={<Search />} />
+      <Route path="" element={<Home />} />
     </Routes>
   );
 }
@@ -47,7 +50,6 @@ function handleSearch(event) {
 }
 
 function SearchBar() {
-  console.log("SearchBar");
   return (
     <form onSubmit={handleSearch}>
       <input type="text" id="search" placeholder="Search..." />
@@ -77,3 +79,4 @@ function SearchBar() {
 }*/
 
 export default App;
+export { API_URL }

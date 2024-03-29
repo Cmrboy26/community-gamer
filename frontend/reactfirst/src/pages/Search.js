@@ -14,7 +14,12 @@ function Search() {
             .then(data => {
                 console.log(data);
                 setBlogs(data);
-            });
+            })
+            /*.catch(error => {
+                console.error(error)
+                //throw new Error("Error fetching blogs: "+window.location.hostname);
+                throw error;
+            })*/;
     }, []);
 
     if (query === null) {
@@ -24,7 +29,7 @@ function Search() {
     return (
         <>
             <h1>Search results for "{query}"</h1>
-            {blogs.filter(blog => blog.title.includes(query))
+            {blogs/*.filter(blog => blog.title.includes(query))*/
                 .map(blog => (<BlogSection key={blog.id} blog={blog} />
             ))}
         </>

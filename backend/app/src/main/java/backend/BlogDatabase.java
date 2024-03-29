@@ -41,6 +41,7 @@ public class BlogDatabase {
     }
 
     public HashMap<Long, Blog> getBlogs() {
+        System.out.println("Getting blogs...");
         return blogs;
     }
 

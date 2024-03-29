@@ -6,13 +6,6 @@
     "configurations": [
         {
             "type": "java",
-            "name": "App",
-            "request": "launch",
-            "mainClass": "backend.App",
-            "projectName": "app"
-        },
-        {
-            "type": "java",
             "name": "Launch Backend",
             "request": "launch",
             "mainClass": "",
@@ -20,7 +13,7 @@
         },
         {
             "command": "cd frontend/reactfirst\nnpm start",
-            "name": "Start Frontend",
+            "name": "Launch Frontend",
             "request": "launch",
             "type": "node-terminal"
         }

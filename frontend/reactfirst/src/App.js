@@ -5,7 +5,10 @@ import './App.css';
 import Home from './pages/Home';
 import Search from './pages/Search';
 
-const API_URL = "http://localhost:8080/api/";
+const API_URL = window.location.hostname+"/api/";
+//const API_URL = "https://jubilant-spork-7wq5rv4jjjr2xv4q-8080.app.github.dev/api/";
+//const API_URL = "http://localhost:8080/api/";
+//const API_URL = "https://jubilant-spork-7wq5rv4jjjr2xv4q-8080.app.github.dev/api/";
 
 const Main = () => {
   return (

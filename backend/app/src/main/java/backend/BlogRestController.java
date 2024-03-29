@@ -1,15 +1,12 @@
 package backend;
 
-import java.security.Principal;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties.Authentication;
-import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -28,9 +25,9 @@ public class BlogRestController {
         return blogDatabase.getBlogs().values();
     }
 
-    @PostMapping("/api/blog")
-    public Blog postBlog(@RequestBody Blog blog) {
-        return blog;
+    @GetMapping("/api/postblog")
+    public String temporaryPostBlog(Authentication authentication) {
+        return "This is a temporary response. "+authentication.getName();
     }
 
 }

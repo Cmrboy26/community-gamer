@@ -17,7 +17,9 @@ public class BlogDatabase {
 
     protected void load() {
         long random = new Random().nextLong(1000);
-        addBlog(new Blog(random, "Title"+random, "Body"+random+" here is ze body"));
+        for (int i = 0; i < 100; i++) {
+            addBlog(new Blog(random+i, "Title"+random, "Body"+random+" here is ze body "+i*4));
+        }
     }
     public static void save(BlogDatabase database) {
         // Save the database to a file
@@ -41,7 +43,6 @@ public class BlogDatabase {
     }
 
     public HashMap<Long, Blog> getBlogs() {
-        System.out.println("Getting blogs...");
         return blogs;
     }
 

@@ -5,7 +5,9 @@ import './App.css';
 import Home from './pages/Home';
 import Search from './pages/Search';
 
-const API_URL = window.location.hostname+"/api/";
+//const API_URL = window.location.hostname+":8080/api/";
+const LOGIN_URL = "http://localhost:8080/";
+const API_URL = LOGIN_URL + "api/";
 //const API_URL = "https://jubilant-spork-7wq5rv4jjjr2xv4q-8080.app.github.dev/api/";
 //const API_URL = "http://localhost:8080/api/";
 //const API_URL = "https://jubilant-spork-7wq5rv4jjjr2xv4q-8080.app.github.dev/api/";
@@ -82,4 +84,5 @@ function SearchBar() {
 }*/
 
 export default App;
-export { API_URL }
+export { API_URL , LOGIN_URL }
+

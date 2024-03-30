@@ -39,6 +39,7 @@ body {
   display: flex;
   justify-content: left;
   align-items: left;
+  place-items: center;
 }
 
 .right {
@@ -48,6 +49,15 @@ body {
   display: flex;
   justify-content: right;
   align-items: right;
+  place-items: center;
+}
+
+.right * {
+  margin-left: 10px;
+}
+
+.left * {
+  margin-right: 10px;
 }
 
 .blogsection {

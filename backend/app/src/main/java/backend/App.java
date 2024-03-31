@@ -2,7 +2,6 @@ package backend;
 
 import javax.annotation.PreDestroy;
 
-import org.apache.tomcat.jni.User;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -17,8 +16,6 @@ public class App {
     LoginRestController loginRestController;
 
     public App() {
-        database = new BlogDatabase();
-        userDatabase = new UsernameDatabase();
         blogRestController = new BlogRestController();
         loginRestController = new LoginRestController(); 
     }

@@ -38,6 +38,9 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
     implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
     implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
+
+    // https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
+    implementation files('libs/mysql-connector-j-8.3.0.jar')
 }
 
 application {

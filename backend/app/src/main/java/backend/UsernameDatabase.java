@@ -36,9 +36,20 @@ public class UsernameDatabase {
             database[1] = "username";
             database[2] = "password";
         }
+        if (database.length != 3) {
+            throw new IllegalArgumentException("database.csv must contain 3 values separated by commas.");
+        }
         DATABASE_URL = database[0];
         DATABASE_USERNAME = database[1];
         DATABASE_PASSWORD = database[2];
+
+        // Test get for username 'Cmrboy26'
+        try {
+            SiteUser user = select(Category.USERNAME, "Cmrboy26");
+            System.out.println(user);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void logoutUser(String token) {
@@ -87,6 +98,7 @@ public class UsernameDatabase {
             }
             i++;
         }
+        System.out.println(query);
 
         ResultSet resultSet = executeQuery(query);
         if (resultSet.next()) {
@@ -108,7 +120,8 @@ public class UsernameDatabase {
     }
 
     private ResultSet executeQuery(String query) throws SQLException {
-        Connection connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
+        String url = "jdbc:mysql://"+DATABASE_URL + "/sql5695331";
+        Connection connection = DriverManager.getConnection(url, DATABASE_USERNAME, DATABASE_PASSWORD);
         Statement statement = connection.createStatement();
         return statement.executeQuery(query);
     }

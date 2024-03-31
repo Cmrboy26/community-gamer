@@ -35,4 +35,9 @@ public class SiteUser {
         // TODO: Implement encryption.
         return unencryptedPassword+"ENCRYPTED";
     }
+
+    @Override
+    public String toString() {
+        return "SiteUser [email=" + email + ", encryptedpassword=" + encryptedpassword + ", username=" + username + "]";
+    }
 }

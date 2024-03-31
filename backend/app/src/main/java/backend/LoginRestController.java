@@ -40,6 +40,7 @@ public class LoginRestController {
             res.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return Map.of("message", "Failed to log in.");
         }
+
         if (user == null) {
             res.setStatus(HttpServletResponse.SC_FORBIDDEN);
             // User not registered
@@ -81,6 +82,7 @@ public class LoginRestController {
             res.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return Map.of("message", "Failed to register.");
         }
+
         if (usernameMatch != null) {
             res.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return Map.of("message", "Username taken.");

@@ -28,5 +28,5 @@ yarn-error.log*
 # Ignore Gradle build output directory
 /backend/build
 
-/backend/database.csv
+*database.csv
 

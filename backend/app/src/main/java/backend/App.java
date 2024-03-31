@@ -20,7 +20,7 @@ public class App {
         database = new BlogDatabase();
         userDatabase = new UsernameDatabase();
         blogRestController = new BlogRestController();
-        loginRestController = new LoginRestController(userDatabase); 
+        loginRestController = new LoginRestController(); 
     }
 
     @PreDestroy

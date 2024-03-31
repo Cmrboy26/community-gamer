@@ -1,5 +1,7 @@
 package backend;
 
+import java.io.File;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -8,15 +10,35 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Objects;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class UsernameDatabase {
 
     public HashMap<String, SiteUser> tokenToUser;
-    public static final String DATABASE_URL = "jdbc:mysql://localhost:3306/users";
-    private static final String DATABASE_USERNAME = "username";
-    private static final String DATABASE_PASSWORD = "password";
+    public final String DATABASE_URL; // = "jdbc:mysql://localhost:3306/users";
+    private final String DATABASE_USERNAME; // = "username";
+    private final String DATABASE_PASSWORD; // = "password";
 
     public UsernameDatabase() {
         tokenToUser = new HashMap<>();
+
+        // Get the database url inside "database.csv"
+        String[] database;
+        try {
+            File file = new File("database.csv");
+            InputStream inputStream = file.toURI().toURL().openStream();
+            database = new String(inputStream.readAllBytes()).split(",");
+        } catch (Exception e) {
+            e.printStackTrace();
+            database = new String[3];
+            database[0] = "jdbc:mysql://localhost:3306/users";
+            database[1] = "username";
+            database[2] = "password";
+        }
+        DATABASE_URL = database[0];
+        DATABASE_USERNAME = database[1];
+        DATABASE_PASSWORD = database[2];
     }
 
     public void logoutUser(String token) {
@@ -43,7 +65,7 @@ public class UsernameDatabase {
     public SiteUser select(Category c1, String v1) throws SQLException {
         Objects.requireNonNull(c1);
         Objects.requireNonNull(v1);
-        return select(c1, selectQuery(c1, v1));
+        return selectUser(c1, selectQuery(c1, v1));
     }
 
     public SiteUser select(Category c1, String v1, Category c2, String v2) throws SQLException {
@@ -51,10 +73,10 @@ public class UsernameDatabase {
         Objects.requireNonNull(c2);
         Objects.requireNonNull(v1);
         Objects.requireNonNull(v2);
-        return select(c1, selectQuery(c1, v1), selectQuery(c2, v2));
+        return selectUser(c1, selectQuery(c1, v1), selectQuery(c2, v2));
     }
 
-    public SiteUser select(Category prefered, String...selectQueries) throws SQLException {
+    public SiteUser selectUser(Category prefered, String...selectQueries) throws SQLException {
         String query = "SELECT * FROM users WHERE ";
         int amount = selectQueries.length;
         int i = 0;

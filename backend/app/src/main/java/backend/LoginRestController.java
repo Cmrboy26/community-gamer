@@ -8,6 +8,7 @@ import java.util.Objects;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,11 +23,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @CrossOrigin(origins = "http://localhost:3000")
 public class LoginRestController {
     
-    UsernameDatabase usernameDatabase;
-
-    public LoginRestController(UsernameDatabase usernameDatabase) {
-        this.usernameDatabase = usernameDatabase;
-    }
+    @Autowired
+    private UsernameDatabase usernameDatabase;
 
     @PostMapping("/api/login")
     public Map<String, String> login(HttpServletResponse res, @RequestBody Map<String, String> body) {

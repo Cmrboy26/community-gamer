@@ -7,6 +7,7 @@ function Search() {
     const query = new URLSearchParams(useLocation().search).get("q");
 
     const [blogs, setBlogs] = useState([]);
+    const [error, setError] = useState("");
 
     useEffect(() => {
         fetch(API_URL + "blogs")
@@ -16,6 +17,7 @@ function Search() {
             })
             .catch(error => {
                 console.error(error)
+                setError("Error: " + error.message);
             });
     }, []);
 
@@ -29,6 +31,7 @@ function Search() {
     return (
         <>
             <h1>Search results for "{query}"</h1>
+            <p>{error}</p>
             <SearchResultAmount amount={length} />
             {FilterSearchResults({ blogs, query }).map(blog => (<BlogSection key={blog.id} blog={blog} />))}
         </>

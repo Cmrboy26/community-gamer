@@ -5,6 +5,8 @@ import Home from './pages/Home';
 import Search from './pages/Search';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import About from './pages/About';
+import Blog from './pages/Blog';
 import CreatePost from './pages/CreatePost';
 import { RequireAuth } from "react-auth-kit";
 import Cookies from 'js-cookie';
@@ -21,6 +23,8 @@ const Main = () => {
       <Route exact path="/logout" element={<Logout />} />
       <Route exact path="/register" element={<Register />} />
       <Route exact path="/post" element={<CreatePost />} />
+      <Route exact path="/about" element={<About />} />
+      <Route exact path="/blog" element={<Blog />} />
       <Route path="" element={<Home />} />
     </Routes>
   );
@@ -40,8 +44,10 @@ function Navbar() {
     <>
       <div className="navbar">
         <div className="left">
+          <img src='logo.png' width={40} height={40} alt='logo'></img>
           <Link to="/home">Home</Link>
           <LoginLink />
+          <Link to="/about">About</Link>
         </div>
         <div className="right">
           <PostLink />

@@ -4,14 +4,12 @@ import { API_URL, LOGIN_URL } from '../App';
 function Home() {
     return (
         <>
-            <h1>Home Page</h1>
-            <p>Welcome to the home page!</p>
+            <div className="centerText inline"> 
+                <img src='logo.png' width={150} height={150} alt='logo'></img>
+                <h1>Community<br></br>Gamer</h1>
+            </div>
         </>
     );
 }
-
-// TODO: try using cookies to make your own login system
-
-
 
 export default Home;

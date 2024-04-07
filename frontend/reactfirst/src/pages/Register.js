@@ -105,7 +105,7 @@ function Register() {
                 <input type="password" onChange={clearError} name="password2" />
                 <br></br>
                 <ReCAPTCHA 
-                    sitekey="6LcR77IpAAAAABIAHWgg8JQVHZMADVibtTvhXm1C"
+                    sitekey="6LeGkrMpAAAAAOqRrlrVQlIRZEbwQnxsoJqjG1iq"
                     onChange={val => setCapVal(val)}
                     style={{ display: "inline-block" }}
                 />

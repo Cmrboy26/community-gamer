@@ -162,10 +162,15 @@ public class LoginRestController {
             res.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return Map.of("message", "Failed to register.");
         }
+
+        // Rate limit the user so they can't spam registration
+        registerAttemptsCache.asMap().remove(getRemoteIP(req));
+        registerAttemptsCache.put(getRemoteIP(req), MAX_REGISTER_ATTEMPTS);
+
         return Map.of("message", "Registration successful.");   
     }
 
-    private static String SECRET = null; // TODO: make a new one and dont have it public lol
+    private static String SECRET = null;
     private static final long EXPIRATION_TIME = 1000 * 60 * 15; // 15 minutes
     
     public static String getJwtSecret() {

@@ -101,6 +101,10 @@ public class UsernameDatabase {
             }
             i++;
         }
+        // TODO: IMPLEMENT THIS, do PreparedStatement
+        for (int v = 0; v < amount; v++) {
+            
+        }
         System.out.println(query);
 
         ResultSet resultSet = executeQuery(query);
@@ -129,7 +133,7 @@ public class UsernameDatabase {
 
     // returns "c = 'v'"
     private String selectQuery(Category c, String v) {
-        return c.name().toLowerCase() + " = '" + v + "'";
+        return c.name().toLowerCase() + " = '?'";
     }
 
     private ResultSet executeQuery(String query) throws SQLException {

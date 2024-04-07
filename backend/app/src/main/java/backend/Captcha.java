@@ -25,7 +25,7 @@ public class Captcha {
 
         String url = "https://www.google.com/recaptcha/api/siteverify";
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
-            .queryParam("secret", getReCAPTCHASecret()) // TODO: make this secret key not public
+            .queryParam("secret", getReCAPTCHASecret())
             .queryParam("remoteip", remoteip)
             .queryParam("response", captcha);
 
@@ -52,9 +52,7 @@ public class Captcha {
     private static String secretCache = null;
 
     public static String getReCAPTCHASecret() {
-
         // Read the secret key from file ".config/recaptcha_secret.csv"
-        // getReCAPTCHASecret: 6LcR77IpAAAAAHSbELDQ5fcsBL4FqM5-_Zf9Xbr3
         if (secretCache != null) {
             return secretCache;
         }

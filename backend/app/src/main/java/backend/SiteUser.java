@@ -1,7 +1,6 @@
 package backend;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
-import at.favre.lib.crypto.bcrypt.BCrypt.Version;
 
 public class SiteUser {
     

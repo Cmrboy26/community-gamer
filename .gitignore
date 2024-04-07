@@ -29,4 +29,6 @@ yarn-error.log*
 /backend/build
 
 *database.csv
+*jwt_secret.csv
+*recaptcha_secret.csv
 

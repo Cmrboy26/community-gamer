@@ -21,6 +21,7 @@ public class BlogDatabase {
             addBlog(new Blog(random+i, "Title"+random, "Body"+random+" here is ze body "+i*4));
         }
     }
+    
     public static void save(BlogDatabase database) {
         // Save the database to a file
         System.out.println("Saving database...");
@@ -28,6 +29,7 @@ public class BlogDatabase {
 
     public Blog getBlog(long id) {
         Blog result = blogs.get(id);
+        System.out.println("Getting blog with id: "+id+" result: "+result);
         if (result == null) {
             throw new IllegalArgumentException("Blog not found");
         }
@@ -35,7 +37,7 @@ public class BlogDatabase {
     }
 
     public void addBlog(Blog blog) {
-        blogs.put(blog.getId(), blog);
+        blogs.put(blog.getID(), blog);
     }
 
     public void deleteBlog(long id) {

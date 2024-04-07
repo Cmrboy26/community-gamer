@@ -1,5 +1,8 @@
 package backend;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
+import at.favre.lib.crypto.bcrypt.BCrypt.Version;
+
 public class SiteUser {
     
     private String username;
@@ -31,9 +34,16 @@ public class SiteUser {
         return new SiteUser(username, email, encrypt(password));
     }
 
+    public static final int HASH_STRENGTH = 12;
+
     public static String encrypt(String unencryptedPassword) {
         // TODO: Implement encryption.
-        return unencryptedPassword+"ENCRYPTED";
+        String encryptedHash = BCrypt.withDefaults().hashToString(HASH_STRENGTH, unencryptedPassword.toCharArray());
+        return encryptedHash;
+    }
+
+    public static boolean checkPassword(String unencryptedPassword, String encryptedPassword) {
+        return BCrypt.verifyer().verify(unencryptedPassword.toCharArray(), encryptedPassword).verified;
     }
 
     @Override

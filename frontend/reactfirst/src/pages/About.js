@@ -31,32 +31,6 @@ function About() {
                     developing a fullstack application).
                 </p>
             </div>
-            <h1>
-                Spam
-                <br></br>
-                Spam
-                <br></br>
-                Spam
-                <br></br>
-                Spam
-                <br></br>
-                Spam
-                <br></br>
-                Spam
-                <br></br>
-                Spam
-                <br></br>
-                Spam
-                <br></br>
-                Spam
-                <br></br>
-                Spam
-                <br></br>
-                Spam
-                <br></br>
-                Spam
-                <br></br>
-            </h1>
         </>
     );
 }

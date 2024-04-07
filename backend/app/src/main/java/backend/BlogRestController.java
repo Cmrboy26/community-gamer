@@ -10,15 +10,33 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = App.CORS_ORIGIN)
 public class BlogRestController {
     
     @Autowired
     private BlogDatabase blogDatabase;
 
-    @GetMapping("/api/blog/{id}")
+    /*@GetMapping("/api/blog/{id}")
     public Blog getBlog(@PathVariable long id) {
         return blogDatabase.getBlog(id);
+    }*/
+
+    @GetMapping("/api/blog/{id}")
+    public Blog getBlog(@PathVariable long id) {
+        try {
+            // return blogDatabase.getBlog(id);
+            return Blog.builder()
+                .ID(id)
+                .title("Title"+id)
+                .category("Category"+id)
+                .tags("HACKS!", "CHEATER")
+                
+                .build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @GetMapping("/api/blogs")

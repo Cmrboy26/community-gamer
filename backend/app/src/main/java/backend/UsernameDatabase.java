@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -11,6 +12,8 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import org.springframework.stereotype.Component;
+
+import com.mysql.cj.PreparedQuery;
 
 @Component
 public class UsernameDatabase {
@@ -26,7 +29,7 @@ public class UsernameDatabase {
         // Get the database url inside "database.csv"
         String[] database;
         try {
-            File file = new File("database.csv");
+            File file = new File(".config/database.csv");
             InputStream inputStream = file.toURI().toURL().openStream();
             database = new String(inputStream.readAllBytes()).split(",");
         } catch (Exception e) {
@@ -110,8 +113,18 @@ public class UsernameDatabase {
         return null;
     }
 
-    public void register(String username, String email, String unencryptedPassword) {
-        // TODO: Implement. Throw exception if user already exists.
+    public void register(String username, String email, String unencryptedPassword) throws SQLException {
+        String encryptedPassword = SiteUser.encrypt(unencryptedPassword);
+
+        String url = "jdbc:mysql://"+DATABASE_URL + "/sql5695331";
+        Connection connection = DriverManager.getConnection(url, DATABASE_USERNAME, DATABASE_PASSWORD);
+        PreparedStatement query = connection.prepareStatement("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
+        query.setString(1, username);
+        query.setString(2, email);
+        query.setString(3, encryptedPassword);
+
+        query.executeUpdate();
+        connection.close();
     }
 
     // returns "c = 'v'"
@@ -123,7 +136,8 @@ public class UsernameDatabase {
         String url = "jdbc:mysql://"+DATABASE_URL + "/sql5695331";
         Connection connection = DriverManager.getConnection(url, DATABASE_USERNAME, DATABASE_PASSWORD);
         Statement statement = connection.createStatement();
-        return statement.executeQuery(query);
+        ResultSet resultSet = statement.executeQuery(query);
+        return resultSet;
     }
 
 }

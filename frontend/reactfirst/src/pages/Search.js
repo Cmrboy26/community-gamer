@@ -48,12 +48,18 @@ function SearchResultAmount({ amount }) {
 }
 
 function BlogSection({ blog }) {
+    const blogid = blog.id;
     return (
         <div className="blogsection">
             <h2>{blog.title}</h2>
-            <button>Read</button>
+            <button onClick={() => clickBlog(blogid)}>Read</button>
         </div>
     );
+}
+
+function clickBlog(id) {
+    const search = '/blog?id=' + id;
+    window.open(search, "_self");
 }
 
 export default Search;

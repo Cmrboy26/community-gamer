@@ -3,9 +3,8 @@ package backend;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Map;
-import java.util.Objects;
 
-import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,21 +15,60 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheBuilderSpec;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = App.CORS_ORIGIN)
 public class LoginRestController {
     
     @Autowired
     private UsernameDatabase usernameDatabase;
 
+    public static final int MAX_LOGIN_ATTEMPTS = 5;
+    public static final int MAX_REGISTER_ATTEMPTS = 3;
+    public static final String LOGIN_COOLDOWN = "1m";
+    public static final String REGISTER_COOLDOWN = "1m";
+
+    private LoadingCache<String, Integer> registerAttemptsCache;
+    private LoadingCache<String, Integer> loginAttemptsCache;
+
+    public LoginRestController() {
+        registerAttemptsCache = CacheBuilder.from(CacheBuilderSpec.parse("maximumSize=1000,expireAfterWrite="+REGISTER_COOLDOWN))
+            .build(new CacheLoader<String, Integer>() {
+                @Override
+                public Integer load(String key) {
+                    return 0;
+                }
+            });
+        loginAttemptsCache = CacheBuilder.from(CacheBuilderSpec.parse("maximumSize=1000,expireAfterWrite="+LOGIN_COOLDOWN))
+            .build(new CacheLoader<String, Integer>() {
+                @Override
+                public Integer load(String key) {
+                    return 0;
+                }
+            });
+    }
+
     @PostMapping("/api/login")
-    public Map<String, String> login(HttpServletResponse res, @RequestBody Map<String, String> body) {
+    public Map<String, String> login(HttpServletRequest req, HttpServletResponse res, @RequestBody Map<String, String> body) {
         String email = body.get("email");
         String password = body.get("password");
-        String encryptedPassword = SiteUser.encrypt(password);
+
+        boolean isRateLimited = isRateLimited(req, MAX_LOGIN_ATTEMPTS, loginAttemptsCache);
+        if (isRateLimited) {
+            res.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return Map.of("message", "Too many attempts. Try again later.");
+        }
 
         // Existing user in the system
         SiteUser user = null;
@@ -47,7 +85,7 @@ public class LoginRestController {
             return Map.of("message", "Failed to log in.");
         }
 
-        if (!Objects.equals(user.getEncryptedPassword(), encryptedPassword)) {
+        if (!SiteUser.checkPassword(password, user.getEncryptedPassword())) {
             res.setStatus(HttpServletResponse.SC_FORBIDDEN);
             // Passwords do not match. Implement a delay to prevent brute force attacks.
             return Map.of("message", "Failed to log in.");
@@ -55,6 +93,7 @@ public class LoginRestController {
 
         String token = generateToken(email);
         usernameDatabase.loginUser(token, user);
+
         return Map.of("message", "Login successful.", "token", token);
     }
 
@@ -69,10 +108,26 @@ public class LoginRestController {
     }
 
     @PostMapping("/api/register")
-    public Map<String, String> register(HttpServletResponse res, @RequestBody Map<String, String> body) {
+    public Map<String, String> register(HttpServletRequest req, HttpServletResponse res, @RequestBody Map<String, String> body) {
+        // TODO: Implement a rate limiter to prevent brute force attacks
         String username = body.get("username");
         String email = body.get("email");
         String password = body.get("password");
+        String recaptcha = body.get("captcha");
+        String remoteAddress = req.getRemoteAddr();
+
+        if (isRateLimited(req, MAX_REGISTER_ATTEMPTS, registerAttemptsCache)) {
+            res.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return Map.of("message", "Too many attempts. Try again later.");
+        }
+
+        // Check if the reCAPTCHA is valid
+        boolean isCaptchaValid = Captcha.verifyCaptcha(recaptcha, remoteAddress);
+        isCaptchaValid = true; // TODO: Remove this line
+        if (!isCaptchaValid) {
+            res.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return Map.of("message", "Invalid reCAPTCHA.");
+        }
 
         // See if someone has the same username
         SiteUser usernameMatch = null;
@@ -98,27 +153,84 @@ public class LoginRestController {
         }
         if (emailMatch != null) {
             res.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return Map.of("message", "Failed to register.");
+            return Map.of("message", "Account already registered under email.");
         }
 
-        usernameDatabase.register(username, email, password);
+        try {
+            usernameDatabase.register(username, email, password);
+        } catch (Exception e) {
+            res.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return Map.of("message", "Failed to register.");
+        }
         return Map.of("message", "Registration successful.");   
     }
 
-    private static final String SECRET = "e8866f08812ef052e39a309ff9cd19f24e5fcec5b73f2670f78128d0027415a4"; // TODO: make a new one and dont have it public lol
+    private static String SECRET = null; // TODO: make a new one and dont have it public lol
     private static final long EXPIRATION_TIME = 1000 * 60 * 15; // 15 minutes
+    
+    public static String getJwtSecret() {
+        // Read from file ".config/jwt_secret.csv"
+
+        if (SECRET != null) {
+            return SECRET;
+        }
+
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(".config/jwt_secret.csv"));
+            String secret = reader.readLine();
+            reader.close();
+            SECRET = secret;
+            return secret;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static String generateToken(String username) {
         return Jwts.builder()
             .setSubject(username)
             .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-            .signWith(SignatureAlgorithm.HS512, SECRET)
+            .signWith(SignatureAlgorithm.HS512, getJwtSecret())
             .compact();
     }
     public static String extractUsername(String token) {
         return Jwts.parser()
-            .setSigningKey(SECRET)
+            .setSigningKey(getJwtSecret())
             .parseClaimsJws(token)
             .getBody()
             .getSubject();
+    }
+
+    private String getRemoteIP(HttpServletRequest req) {
+        String remoteAddress = req.getHeader("X-Forwarded-For");
+        if (remoteAddress == null) {
+            remoteAddress = req.getRemoteAddr();
+        }
+        return remoteAddress;
+    }
+
+    private boolean isRateLimited(HttpServletRequest req, int maxAttempts, LoadingCache<String, Integer> cache) {
+        String remoteIP = getRemoteIP(req);
+        Integer requests = 0;
+        try {
+            requests = cache.get(remoteIP);
+            if (requests != null) {
+                if (requests >= maxAttempts) {
+                    cache.asMap().remove(remoteIP);
+                    cache.put(remoteIP, requests);
+                    return true;
+                } else {
+                    cache.put(getRemoteIP(req), requests + 1);
+                }
+            } else {
+                requests = 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        requests++;
+        cache.put(remoteIP, requests);
+        return false;
     }
 }

@@ -12,10 +12,11 @@ function Blog() {
     useEffect(() => {
         setError("Retrieving blog \"" + blogID + "\"...");
 
-        fetch(API_URL + "blogs/" + blogID)
+        fetch(API_URL + "blog/" + blogID)
             .then(response => response.json())
             .then(data => {
                 setBlogData(data);
+                setError("");
             })
             .catch(error => {
                 console.error(error);
@@ -56,17 +57,18 @@ function errorBlog() {
 
 function BlogPage(jsonBlogData) {
 
-    if (jsonBlogData === undefined) {
-        return <p>Blog data is not present.</p>;
+    if (jsonBlogData.blogData === undefined || jsonBlogData.blogData.length === 0) {
+        return <p>Blog data is not present or loading.</p>;
     }
 
     try {
+        console.log(jsonBlogData);
         return (
             <div className="blogContent">
                 <h1>{jsonBlogData.blogData.title}</h1>
                 <h2>{jsonBlogData.blogData.category}</h2>
-                <p>Tags: {jsonBlogData.blogData.tags.join(", ")}</p>
-                {jsonBlogData.blogData.content.map(content => (
+                <Tags tags={jsonBlogData.blogData.tags} />
+                {jsonBlogData.blogData.sections.map(content => (
                     <ContentSection key={content.id} type={content.type} data={content.data} />
                 ))}
             </div>
@@ -75,6 +77,13 @@ function BlogPage(jsonBlogData) {
         console.error(error);
         return <p>Error: {error.message}</p>;
     }
+}
+
+function Tags({ tags }) {
+    if (tags === undefined) {
+        return <></>;
+    }
+    return <p>{tags.join("  -  ")}</p>
 }
 
 function ContentSection({ type, data }) {

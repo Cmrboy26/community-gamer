@@ -11,7 +11,8 @@ import CreatePost from './pages/CreatePost';
 import { RequireAuth } from "react-auth-kit";
 import Cookies from 'js-cookie';
 
-const LOGIN_URL = "http://localhost:8080/";
+//const LOGIN_URL = "http://localhost:8080/";
+const LOGIN_URL = "http://71.82.254.4:8080/";
 const API_URL = LOGIN_URL + "api/";
 
 const Main = () => {

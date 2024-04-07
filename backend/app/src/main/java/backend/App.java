@@ -9,6 +9,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 @SpringBootApplication
 public class App {
     
+    public static final String CORS_ORIGIN = "http://71.82.254.4:3000";
+
     BlogDatabase database;
     UsernameDatabase userDatabase;
 

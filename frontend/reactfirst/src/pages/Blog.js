@@ -65,9 +65,10 @@ function BlogPage(jsonBlogData) {
         console.log(jsonBlogData);
         return (
             <div className="blogContent">
-                <h1>{jsonBlogData.blogData.title}</h1>
-                <h2>{jsonBlogData.blogData.category}</h2>
+                <h1 className='large'>{jsonBlogData.blogData.title}</h1>
+                <h2 className='large'>{jsonBlogData.blogData.category}</h2>
                 <Tags tags={jsonBlogData.blogData.tags} />
+                <hr></hr>
                 {jsonBlogData.blogData.sections.map(content => (
                     <ContentSection key={content.id} type={content.type} data={content.data} />
                 ))}

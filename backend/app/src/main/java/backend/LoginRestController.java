@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,7 +29,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 @RestController
-@CrossOrigin(origins = App.CORS_ORIGIN)
+@CrossOrigin(origins = App.CORS_ORIGIN, allowCredentials = "true")
 public class LoginRestController {
     
     @Autowired
@@ -93,6 +94,9 @@ public class LoginRestController {
 
         String token = generateToken(email);
         usernameDatabase.loginUser(token, user);
+
+        Cookie tokenCookie = new Cookie("_authHH", token);
+        res.addCookie(tokenCookie);
 
         return Map.of("message", "Login successful.", "token", token);
     }
@@ -205,6 +209,14 @@ public class LoginRestController {
             .parseClaimsJws(token)
             .getBody()
             .getSubject();
+    }
+    public static boolean isTokenValid(String token) {
+        try {
+            Jwts.parser().setSigningKey(getJwtSecret()).parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private String getRemoteIP(HttpServletRequest req) {

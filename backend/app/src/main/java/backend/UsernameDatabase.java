@@ -18,6 +18,7 @@ import com.mysql.cj.PreparedQuery;
 @Component
 public class UsernameDatabase {
 
+    // TODO: use a loading cache to store the token to user mapping
     public HashMap<String, SiteUser> tokenToUser;
     public final String DATABASE_URL; // = "jdbc:mysql://localhost:3306/users";
     private final String DATABASE_USERNAME; // = "username";
@@ -70,6 +71,23 @@ public class UsernameDatabase {
         return tokenToUser.get(token);
     }
 
+    public boolean isUserLoggedIn(String token) {
+        if (token == null) {
+            return false;
+        }
+        if (token.isEmpty()) {
+            return false;
+        }
+        if (!tokenToUser.containsKey(token)) {
+            return false;
+        }
+        boolean validToken = LoginRestController.isTokenValid(token);
+        if (!validToken) {
+            tokenToUser.remove(token);
+        }
+        return validToken;
+    }
+
     public enum Category {
         USERNAME,
         EMAIL,
@@ -92,36 +110,28 @@ public class UsernameDatabase {
 
     public SiteUser selectUser(Category prefered, String...selectQueries) throws SQLException {
         String query = "SELECT * FROM users WHERE ";
-        int amount = selectQueries.length;
-        int i = 0;
-        for (String selectQuery : selectQueries) {
-            query += selectQuery;
-            if (i < amount - 1) {
-                query += " AND ";
-            }
-            i++;
-        }
-        // TODO: IMPLEMENT THIS, do PreparedStatement
-        for (int v = 0; v < amount; v++) {
-            
-        }
-        System.out.println(query);
+        //int amount = selectQueries.length;
+        query += String.join(" AND ", selectQueries);
+        query += ";";
+        Connection connection = createConnection();
+        PreparedStatement statement = connection.prepareStatement(query);
 
-        ResultSet resultSet = executeQuery(query);
+        ResultSet resultSet = statement.executeQuery(query);
         if (resultSet.next()) {
             String username = resultSet.getString(Category.USERNAME.name().toLowerCase());
             String email = resultSet.getString(Category.EMAIL.name().toLowerCase());
             String password = resultSet.getString(Category.PASSWORD.name().toLowerCase());
+            connection.close();
             return SiteUser.from(username, email, password, true);
         }
+        connection.close();
         return null;
     }
 
     public void register(String username, String email, String unencryptedPassword) throws SQLException {
         String encryptedPassword = SiteUser.encrypt(unencryptedPassword);
 
-        String url = "jdbc:mysql://"+DATABASE_URL + "/sql5695331";
-        Connection connection = DriverManager.getConnection(url, DATABASE_USERNAME, DATABASE_PASSWORD);
+        Connection connection = createConnection();
         PreparedStatement query = connection.prepareStatement("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
         query.setString(1, username);
         query.setString(2, email);
@@ -133,15 +143,19 @@ public class UsernameDatabase {
 
     // returns "c = 'v'"
     private String selectQuery(Category c, String v) {
-        return c.name().toLowerCase() + " = '?'";
+        return c.name().toLowerCase() + " = '"+v+"'";
     }
 
     private ResultSet executeQuery(String query) throws SQLException {
-        String url = "jdbc:mysql://"+DATABASE_URL + "/sql5695331";
-        Connection connection = DriverManager.getConnection(url, DATABASE_USERNAME, DATABASE_PASSWORD);
+        Connection connection = createConnection();
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(query);
         return resultSet;
     }
 
+    private Connection createConnection() throws SQLException {
+        String url = "jdbc:mysql://"+DATABASE_URL + "/sql5695331";
+        Connection connection = DriverManager.getConnection(url, DATABASE_USERNAME, DATABASE_PASSWORD);
+        return connection;
+    }
 }

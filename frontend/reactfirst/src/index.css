@@ -55,6 +55,12 @@ body {
 p.large {
   font-size: 130%;
 }
+h1.large {
+  font-size: 275%;
+}
+h2.large {
+  font-size: 180%;
+}
 
 .centerText {
   display: flex;

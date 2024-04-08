@@ -19,8 +19,9 @@ function Blog() {
                 setError("");
             })
             .catch(error => {
-                console.error(error);
                 setError("There was an error retrieving the blog: " + error.message);
+                setBlogData(errorBlog(error));
+                console.error(error);
             });
     }, [blogID]);
 
@@ -32,27 +33,31 @@ function Blog() {
     );
 }
 
-function errorBlog() {
+function errorBlog(error) {
     const data = {
-        title: "Blog Title",
-        category: "Blog Category",
-        tags: ["tag1", "tag2"],
-        content: [
+        title: "THERE WAS AN ERROR!",
+        category: "Error Report",
+        tags: ["Uh oh!", "That's not good!", "Error!"],
+        sections: [
             {
                 type: "h1",
-                data: "Here is a <h1> title </h1>."
+                data: "What went wrong?"
             },
             {
                 type: "h2",
-                data: "Here a <h2> subheader </h2>."
+                data: "Here's the rundown:"
             },
             {
                 type: "text",
-                data: "Here is some more text."
+                data: "The only thing we got for an error was this: \""+error.messag+"\"."
+            },
+            {
+                type: "text",
+                data: "This was apperently occured on line "+error.lineNumber+" in file "+error.fileName+"."
             }
         ]
     }
-    return { blogData: data };
+    return data;
 }
 
 function BlogPage(jsonBlogData) {
@@ -69,7 +74,7 @@ function BlogPage(jsonBlogData) {
                 <h2 className='large'>{jsonBlogData.blogData.category}</h2>
                 <Tags tags={jsonBlogData.blogData.tags} />
                 <hr></hr>
-                {jsonBlogData.blogData.sections.map(content => (
+                {jsonBlogData.blogData.sections?.map(content => (
                     <ContentSection key={content.id} type={content.type} data={content.data} />
                 ))}
             </div>

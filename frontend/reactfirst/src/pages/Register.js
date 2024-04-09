@@ -76,9 +76,8 @@ function Register() {
     };
     const clearError = () => {
         setError("");
-    }
-
-
+    };
+    const captcha = getReCAPTCHAKey();
     return (
         <div className="App">
             <h1>Register</h1>
@@ -105,7 +104,7 @@ function Register() {
                 <input type="password" onChange={clearError} name="password2" />
                 <br></br>
                 <ReCAPTCHA 
-                    sitekey="6LeGkrMpAAAAAOqRrlrVQlIRZEbwQnxsoJqjG1iq"
+                    sitekey={captcha}
                     onChange={val => setCapVal(val)}
                     style={{ display: "inline-block" }}
                 />
@@ -116,6 +115,12 @@ function Register() {
             </form>
         </div>
     );
+}
+
+function getReCAPTCHAKey() {
+    // TODO: get this to work
+    return "6LeGkrMpAAAAAOqRrlrVQlIRZEbwQnxsoJqjG1iq";
+    //return fetch(process.env.PUBLIC_URL+"/recaptcha_public.txt").then(response => response.text()).then(data => {return data;});
 }
 
 function registerAccount(email, password) {

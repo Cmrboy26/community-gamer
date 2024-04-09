@@ -22,11 +22,13 @@ body {
   padding: 5px;
 }
 
-.navbar input #search {
-  font-size: 20px;
+.navbar * #search {
+  font-size: 15px;
   text-decoration: none;
   color: black;
   padding: 5px;
+  width: 15vw;
+  height: 15px;
 }
 
 .navbar a:hover {

@@ -34,7 +34,9 @@ function Blog() {
 }
 
 function errorBlog(error) {
+    console.log(error);
     const data = {
+        id: -2,
         title: "THERE WAS AN ERROR!",
         category: "Error Report",
         tags: ["Uh oh!", "That's not good!", "Error!"],
@@ -68,20 +70,28 @@ function BlogPage(jsonBlogData) {
 
     try {
         console.log(jsonBlogData);
+        console.log(jsonBlogData.blogData);
+
+        let blogData = jsonBlogData.blogData;
+
+        if (blogData.id === undefined || blogData.id === null || blogData.id === -1) {
+            blogData = errorBlog(new Error("Blog data could not be loaded."));
+        }
+
         return (
             <div className="blogContent">
-                <h1 className='large'>{jsonBlogData.blogData.title}</h1>
-                <h2 className='large'>{jsonBlogData.blogData.category}</h2>
-                <Tags tags={jsonBlogData.blogData.tags} />
+                <h1 className='large'>{blogData.title}</h1>
+                <h2 className='large'>{blogData.category}</h2>
+                <Tags tags={blogData.tags} />
                 <hr></hr>
-                {jsonBlogData.blogData.sections?.map(content => (
-                    <ContentSection key={content.id} type={content.type} data={content.data} />
+                {blogData.sections.map(content => (
+                    <ContentSection key={content.data+content.type} type={content.type} data={content.data} />
                 ))}
             </div>
         );
     } catch (error) {
         console.error(error);
-        return <p>Error: {error.message}</p>;
+        return <p>There was an error displaying the blog: {error.message}</p>;
     }
 }
 
@@ -99,9 +109,6 @@ function ContentSection({ type, data }) {
     if (type === "h2") {
         return <h3>{data}</h3>;
     }
-    /*if (type === "image") {
-        return <img src={data} alt="Blog Image" />;
-    }*/
     if (type === "text") {
         return <p>{data}</p>;
     }

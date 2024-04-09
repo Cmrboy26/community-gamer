@@ -220,7 +220,7 @@ public class LoginRestController {
         }
     }
 
-    private String getRemoteIP(HttpServletRequest req) {
+    public static String getRemoteIP(HttpServletRequest req) {
         String remoteAddress = req.getHeader("X-Forwarded-For");
         if (remoteAddress == null) {
             remoteAddress = req.getRemoteAddr();
@@ -228,7 +228,7 @@ public class LoginRestController {
         return remoteAddress;
     }
 
-    private boolean isRateLimited(HttpServletRequest req, int maxAttempts, LoadingCache<String, Integer> cache) {
+    public static boolean isRateLimited(HttpServletRequest req, int maxAttempts, LoadingCache<String, Integer> cache) {
         String remoteIP = getRemoteIP(req);
         Integer requests = 0;
         try {

@@ -1,13 +1,16 @@
 package backend;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.tomcat.util.json.JSONParser;
 import org.apache.tomcat.util.json.ParseException;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 public class Blog {
@@ -16,17 +19,25 @@ public class Blog {
     public static final int MAX_CATEGORY = 36;
     public static final int MAX_TITLE = 128;
 
-    private long id, userid;
+    private long id = -1;
+    private long userID = 0;
+    private long postDate;
     private String title, category;
     private String[] tags;
     private List<BlogSection> sections;
 
     @SuppressWarnings("unchecked")
     public Blog(ResultSet set) throws SQLException, ParseException {
+        this(set, false);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Blog(ResultSet set, boolean bypassNext) throws SQLException, ParseException {
         this();
-        if (set.next()) {
+        if (bypassNext || set.next()) {
             this.id = set.getLong("id");
-            this.userid = set.getLong("userid");
+            this.userID = set.getLong("userid");
+            this.postDate = set.getDate("date").getTime();
             String json = set.getString("json");
             JSONParser parser = new JSONParser(json);
             HashMap<String, Object> obj = (HashMap<String, Object>) parser.parse();
@@ -34,7 +45,7 @@ public class Blog {
             this.category = (String) obj.get("category");
             List<String> tagsList = (List<String>) obj.get("tags");
             this.tags = tagsList.toArray(new String[tagsList.size()]);
-            List<HashMap<String, String>> contentList = (List<HashMap<String, String>>) obj.get("content");
+            List<HashMap<String, String>> contentList = (List<HashMap<String, String>>) obj.get("sections");
             for (HashMap<String, String> section : contentList) {
                 this.sections.add(new BlogSection(section.get("type"), section.get("data")));
             }
@@ -56,6 +67,9 @@ public class Blog {
     public long getID() {
         return id;
     }
+    public long getUserID() {
+        return userID;
+    }
     public String getTitle() {
         return title;
     }
@@ -72,9 +86,15 @@ public class Blog {
     public String[] getTags() {
         return tags;
     }
+    public long getPostDate() {
+        return postDate;
+    }
 
     public void setID(long id) {
         this.id = id;
+    }
+    public void setUserID(long userid) {
+        this.userID = userid;
     }
     public void setTitle(String title) {
         this.title = title;
@@ -87,6 +107,9 @@ public class Blog {
     }
     public void setTags(String...tags) {
         this.tags = tags;
+    }
+    public void setPostDate(long postDate) {
+        this.postDate = postDate;
     }
 
     public static BlogBuilder builder() {
@@ -161,6 +184,15 @@ public class Blog {
         public Blog build() {
             return blog;
         }
+    }
+
+    public abstract class IDExemptMixin {
+
+        @JsonIgnore
+        private long id;
+        @JsonIgnore
+        private long userID;
+
     }
 
 }

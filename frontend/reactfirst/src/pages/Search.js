@@ -4,13 +4,23 @@ import { useEffect, useState } from 'react';
 
 function Search() {
 
-    const query = new URLSearchParams(useLocation().search).get("q");
+    let query = new URLSearchParams(useLocation().search).get("q");
+    if (query.length < 1) {
+        query = " ";
+    }
 
     const [blogs, setBlogs] = useState([]);
     const [error, setError] = useState("");
 
     useEffect(() => {
-        fetch(API_URL + "blogs")
+        fetch(API_URL + "blogs", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: query
+        })
             .then(response => response.json())
             .then(data => {
                 setBlogs(data);
@@ -24,8 +34,10 @@ function Search() {
     if (query === null) {
         return <h1>Search for something...</h1>;
     }
+    //const blogList = FilterSearchResults({ blogs, query });
+    const blogList = blogs;
 
-    const length = FilterSearchResults({ blogs, query }).length;
+    const length = blogList.length;
     console.log(blogs);
 
     return (
@@ -33,7 +45,7 @@ function Search() {
             <h1>Search results for "{query}"</h1>
             <p>{error}</p>
             <SearchResultAmount amount={length} />
-            {FilterSearchResults({ blogs, query }).map(blog => (<BlogSection key={blog.id} blog={blog} />))}
+            {blogList.map(blog => (<BlogSection key={blog.id} blog={blog} />))}
         </>
     );
 }
@@ -49,9 +61,13 @@ function SearchResultAmount({ amount }) {
 
 function BlogSection({ blog }) {
     const blogid = blog.id;
+    console.log(blog);
+    var date = new Date(blog.postDate);
+    var dateString = date.toDateString();
     return (
         <div className="blogsection">
             <h2>{blog.title}</h2>
+            <p>Posted {dateString}</p>
             <button onClick={() => clickBlog(blogid)}>Read</button>
         </div>
     );

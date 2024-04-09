@@ -45,6 +45,9 @@ dependencies {
     // bcrypt
     implementation "at.favre.lib:bcrypt:0.10.2"
 
+    // jackson
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
+
 }
 
 application {

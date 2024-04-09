@@ -102,6 +102,10 @@ function logout() {
   });
 }
 
+function logInCheck() {
+  // TODO: Ping the server to check if the user is logged in (aka token is stored in the database)
+}
+
 function handleSearch(event) {
   // Go to the search page ("/search")
   event.preventDefault();

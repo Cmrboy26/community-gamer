@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { API_URL } from "../App";
 
 function CreatePost() {
+    
     const [sections, setSections] = useState([]);
 
     useEffect(() => {
@@ -52,6 +53,7 @@ function CreatePost() {
     return (
         <div className="app">
             <h1>Create Post</h1>
+            <p>NOTE: Currently, progress will not be saved. Draft your post elsewhere before posting!</p>
             <br></br>
             <form>
                 <label>Title:</label>

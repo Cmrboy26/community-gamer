@@ -1,7 +1,14 @@
 package backend;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+
+import org.apache.tomcat.util.json.JSONParser;
+import org.apache.tomcat.util.json.ParseException;
+
 
 public class Blog {
 
@@ -9,11 +16,31 @@ public class Blog {
     public static final int MAX_CATEGORY = 36;
     public static final int MAX_TITLE = 128;
 
-    private long id;
+    private long id, userid;
     private String title, category;
     private String[] tags;
     private List<BlogSection> sections;
-    
+
+    @SuppressWarnings("unchecked")
+    public Blog(ResultSet set) throws SQLException, ParseException {
+        this();
+        if (set.next()) {
+            this.id = set.getLong("id");
+            this.userid = set.getLong("userid");
+            String json = set.getString("json");
+            JSONParser parser = new JSONParser(json);
+            HashMap<String, Object> obj = (HashMap<String, Object>) parser.parse();
+            this.title = (String) obj.get("title");
+            this.category = (String) obj.get("category");
+            List<String> tagsList = (List<String>) obj.get("tags");
+            this.tags = tagsList.toArray(new String[tagsList.size()]);
+            List<HashMap<String, String>> contentList = (List<HashMap<String, String>>) obj.get("content");
+            for (HashMap<String, String> section : contentList) {
+                this.sections.add(new BlogSection(section.get("type"), section.get("data")));
+            }
+        }
+    }
+
     public Blog() {
         sections = new ArrayList<BlogSection>();
         this.tags = new String[0];
@@ -38,6 +65,7 @@ public class Blog {
     private BlogSection getSection(int index) {
         return sections.get(index);
     }
+
     public List<BlogSection> getSections() {
         return sections;
     }
@@ -56,6 +84,9 @@ public class Blog {
     }
     public void addSection(String type, String data) {
         sections.add(new BlogSection(type, data));
+    }
+    public void setTags(String...tags) {
+        this.tags = tags;
     }
 
     public static BlogBuilder builder() {

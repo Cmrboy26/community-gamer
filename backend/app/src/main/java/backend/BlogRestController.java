@@ -1,6 +1,7 @@
 package backend;
 
 import java.util.Collection;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -12,8 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import backend.Blog.BlogSection;
 
 @RestController
 //@CrossOrigin(origins = "http://localhost:3000")
@@ -37,7 +36,9 @@ public class BlogRestController {
 
     @GetMapping("/api/blogs")
     public Collection<Blog> getBlogs() {
-        return blogDatabase.getBlogs().values();
+        ArrayList<Blog> blogs = new ArrayList<>();
+        blogs.add(blogDatabase.getBlog(0));
+        return blogs;
     }
 
     @PostMapping("/api/postblog")

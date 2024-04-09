@@ -1,7 +1,5 @@
 package backend;
 
-import java.io.File;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -13,39 +11,19 @@ import java.util.Objects;
 
 import org.springframework.stereotype.Component;
 
-import com.mysql.cj.PreparedQuery;
+import com.google.common.primitives.UnsignedInteger;
 
 @Component
 public class UsernameDatabase {
 
     // TODO: use a loading cache to store the token to user mapping
     public HashMap<String, SiteUser> tokenToUser;
-    public final String DATABASE_URL; // = "jdbc:mysql://localhost:3306/users";
-    private final String DATABASE_USERNAME; // = "username";
-    private final String DATABASE_PASSWORD; // = "password";
 
     public UsernameDatabase() {
         tokenToUser = new HashMap<>();
 
         // Get the database url inside "database.csv"
-        String[] database;
-        try {
-            File file = new File(".config/database.csv");
-            InputStream inputStream = file.toURI().toURL().openStream();
-            database = new String(inputStream.readAllBytes()).split(",");
-        } catch (Exception e) {
-            e.printStackTrace();
-            database = new String[3];
-            database[0] = "jdbc:mysql://localhost:3306/users";
-            database[1] = "username";
-            database[2] = "password";
-        }
-        if (database.length != 3) {
-            throw new IllegalArgumentException("database.csv must contain 3 values separated by commas.");
-        }
-        DATABASE_URL = database[0];
-        DATABASE_USERNAME = database[1];
-        DATABASE_PASSWORD = database[2];
+        
 
         // Test get for username 'Cmrboy26'
         try {
@@ -89,6 +67,7 @@ public class UsernameDatabase {
     }
 
     public enum Category {
+        ID,
         USERNAME,
         EMAIL,
         PASSWORD
@@ -110,7 +89,6 @@ public class UsernameDatabase {
 
     public SiteUser selectUser(Category prefered, String...selectQueries) throws SQLException {
         String query = "SELECT * FROM users WHERE ";
-        //int amount = selectQueries.length;
         query += String.join(" AND ", selectQueries);
         query += ";";
         Connection connection = createConnection();
@@ -118,11 +96,12 @@ public class UsernameDatabase {
 
         ResultSet resultSet = statement.executeQuery(query);
         if (resultSet.next()) {
+            UnsignedInteger id = UnsignedInteger.valueOf(resultSet.getLong(Category.ID.name().toLowerCase()));
             String username = resultSet.getString(Category.USERNAME.name().toLowerCase());
             String email = resultSet.getString(Category.EMAIL.name().toLowerCase());
             String password = resultSet.getString(Category.PASSWORD.name().toLowerCase());
             connection.close();
-            return SiteUser.from(username, email, password, true);
+            return SiteUser.from(id, username, email, password, true);
         }
         connection.close();
         return null;
@@ -154,8 +133,6 @@ public class UsernameDatabase {
     }
 
     private Connection createConnection() throws SQLException {
-        String url = "jdbc:mysql://"+DATABASE_URL + "/sql5695331";
-        Connection connection = DriverManager.getConnection(url, DATABASE_USERNAME, DATABASE_PASSWORD);
-        return connection;
+        return SQLDatabase.createConnection();
     }
 }

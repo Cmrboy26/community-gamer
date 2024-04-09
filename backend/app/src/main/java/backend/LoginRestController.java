@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,14 +48,14 @@ public class LoginRestController {
         registerAttemptsCache = CacheBuilder.from(CacheBuilderSpec.parse("maximumSize=1000,expireAfterWrite="+REGISTER_COOLDOWN))
             .build(new CacheLoader<String, Integer>() {
                 @Override
-                public Integer load(String key) {
+                public Integer load(@Nonnull String key) {
                     return 0;
                 }
             });
         loginAttemptsCache = CacheBuilder.from(CacheBuilderSpec.parse("maximumSize=1000,expireAfterWrite="+LOGIN_COOLDOWN))
             .build(new CacheLoader<String, Integer>() {
                 @Override
-                public Integer load(String key) {
+                public Integer load(@Nonnull String key) {
                     return 0;
                 }
             });

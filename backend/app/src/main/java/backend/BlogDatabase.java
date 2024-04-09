@@ -1,55 +1,85 @@
 package backend;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Random;
+import java.util.List;
+import java.util.ArrayList;
 
+import org.apache.tomcat.util.json.JSONParser;
+import org.apache.tomcat.util.json.ParseException;
 import org.springframework.stereotype.Component;
+
+import backend.Blog.BlogSection;
 
 @Component
 public class BlogDatabase {
-    
-    private HashMap<Long, Blog> blogs;
 
     public BlogDatabase() {
-        blogs = new HashMap<Long, Blog>();
-        load();
+
     }
 
     protected void load() {
-        long random = new Random().nextLong(1000);
-        for (int i = 0; i < 100; i++) {
-            //addBlog(new Blog(random+i, "Title"+random, "Body"+random+" here is ze body "+i*4));
-        }
+
     }
     
     public static void save(BlogDatabase database) {
-        // Save the database to a file
-        System.out.println("Saving database...");
+
+    }
+
+    public String getBlogString(long id) {
+        try {
+            Connection connection = SQLDatabase.createConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM blogs WHERE id = ?");
+            statement.setLong(1, id);
+            ResultSet set = statement.executeQuery();
+            if (set.next()) {
+                connection.close();
+                return set.getString("json");
+            }
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public Blog getBlog(long id) {
-        Blog result = blogs.get(id);
-        if (result == null) {
-            throw new IllegalArgumentException("Blog not found");
+        Connection connection = null;
+        try {
+            connection = SQLDatabase.createConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM blogs WHERE id = ?");
+            statement.setLong(1, id);
+
+            ResultSet set = statement.executeQuery();
+            Blog blog = new Blog(set);
+            connection.close();
+            return blog;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-        return result;
+        throw new IllegalArgumentException("Blog not found.");
     }
 
     public void addBlog(Blog blog) {
-        long id = findNextFreeBlogID();
-        blogs.put(id, blog);
-    }
 
-    public long findNextFreeBlogID() {
-        return blogs.size();
     }
 
     public void deleteBlog(long id) {
-        blogs.remove(id);
-    }
 
-    public HashMap<Long, Blog> getBlogs() {
-        return blogs;
     }
 
 }

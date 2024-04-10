@@ -32,3 +32,6 @@ yarn-error.log*
 *jwt_secret.csv
 *recaptcha_secret.csv
 
+# Ignore VS Code settings
+.vscode
+

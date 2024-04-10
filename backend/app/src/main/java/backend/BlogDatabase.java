@@ -19,14 +19,6 @@ public class BlogDatabase {
 
     }
 
-    protected void load() {
-
-    }
-    
-    public static void save(BlogDatabase database) {
-
-    }
-
     public String getBlogString(long id) {
         try {
             Connection connection = SQLDatabase.createConnection();
@@ -121,8 +113,18 @@ public class BlogDatabase {
         }
     }
 
-    public void deleteBlog(long id) {
-
+    public void deleteBlog(SiteUser user, long id) {
+        // TODO: Verify that this functions correctly.
+        try {
+            Connection connection = SQLDatabase.createConnection();
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM blogs WHERE id = ? AND userid = ?");
+            statement.setLong(1, id);
+            statement.setLong(2, user.getId().longValue());
+            statement.executeUpdate();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 }

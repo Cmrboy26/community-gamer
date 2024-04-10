@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ReCAPTCHA from "react-google-recaptcha";
 import { API_URL } from "../App";
+import { config } from '../Config';
 
 const recaptchaRef = React.createRef();
 
@@ -119,7 +120,8 @@ function Register() {
 
 function getReCAPTCHAKey() {
     // TODO: get this to work
-    return "6LeGkrMpAAAAAOqRrlrVQlIRZEbwQnxsoJqjG1iq";
+    //return "6LeGkrMpAAAAAOqRrlrVQlIRZEbwQnxsoJqjG1iq";
+    return config.reCAPTCHA_public_key;
     //return fetch(process.env.PUBLIC_URL+"/recaptcha_public.txt").then(response => response.text()).then(data => {return data;});
 }
 

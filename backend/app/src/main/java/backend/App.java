@@ -25,7 +25,7 @@ public class App {
 
     @PreDestroy
     public void close() {
-        BlogDatabase.save(database);
+        
     }
 
     public static void main(String[] args) {

@@ -10,7 +10,7 @@ import Blog from './pages/Blog';
 import CreatePost from './pages/CreatePost';
 import { RequireAuth } from "react-auth-kit";
 import Cookies from 'js-cookie';
-import { config } from './config';
+import { config } from './Config';
 
 //const LOGIN_URL = "http://localhost:8080/";
 const API_URL = config.api_url + "api/";
@@ -46,7 +46,7 @@ function Navbar() {
       <div className="navbar">
         <div className="left">
           <img src='logo.png' width={40} height={40} alt='logo'></img>
-          <Link to="/home">Home {API_URL} </Link>
+          <Link to="/home">Home</Link>
           <LoginLink />
           <Link to="/about">About</Link>
         </div>

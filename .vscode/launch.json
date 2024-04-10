@@ -12,15 +12,20 @@
             "projectName": "app"
         },
         {
-            "type": "java",
-            "name": "Launch Backend",
-            "request": "launch",
-            "mainClass": "",
-            "args": ""
-        },
-        {
             "command": "cd frontend/reactfirst\nnpm start",
             "name": "Launch Frontend",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+        {
+            "command": "cd backend\n./gradlew :App:run",
+            "name": "Launch Backend",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+        {
+            "command": "cd backend\n./gradlew :App:test",
+            "name": "Test Backend",
             "request": "launch",
             "type": "node-terminal"
         }

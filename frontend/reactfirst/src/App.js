@@ -10,10 +10,10 @@ import Blog from './pages/Blog';
 import CreatePost from './pages/CreatePost';
 import { RequireAuth } from "react-auth-kit";
 import Cookies from 'js-cookie';
+import { config } from './config';
 
-const LOGIN_URL = "http://localhost:8080/";
-//const LOGIN_URL = "http://71.82.254.4:8080/";
-const API_URL = LOGIN_URL + "api/";
+//const LOGIN_URL = "http://localhost:8080/";
+const API_URL = config.api_url + "api/";
 
 const Main = () => {
   return (
@@ -46,7 +46,7 @@ function Navbar() {
       <div className="navbar">
         <div className="left">
           <img src='logo.png' width={40} height={40} alt='logo'></img>
-          <Link to="/home">Home</Link>
+          <Link to="/home">Home {API_URL} </Link>
           <LoginLink />
           <Link to="/about">About</Link>
         </div>
@@ -91,7 +91,7 @@ function Logout() {
 }
 
 function logout() {
-  fetch(LOGIN_URL + "api/logout", {
+  fetch(API_URL + "logout", {
     method: "DELETE",
     credentials: "include",
   }).then(() => {
@@ -148,5 +148,5 @@ function isLoggedIn() {
 
 export { isLoggedIn, logout, logoutToHome };
 export default App;
-export { API_URL , LOGIN_URL }
+export { API_URL }
 

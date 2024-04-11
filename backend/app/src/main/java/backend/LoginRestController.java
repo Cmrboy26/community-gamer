@@ -114,7 +114,6 @@ public class LoginRestController {
 
     @PostMapping("/api/register")
     public Map<String, String> register(HttpServletRequest req, HttpServletResponse res, @RequestBody Map<String, String> body) {
-        // TODO: Implement a rate limiter to prevent brute force attacks
         String username = body.get("username");
         String email = body.get("email");
         String password = body.get("password");
@@ -128,7 +127,6 @@ public class LoginRestController {
 
         // Check if the reCAPTCHA is valid
         boolean isCaptchaValid = Captcha.verifyCaptcha(recaptcha, remoteAddress);
-        isCaptchaValid = true; // TODO: Remove this line
         if (!isCaptchaValid) {
             res.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return Map.of("message", "Invalid reCAPTCHA.");

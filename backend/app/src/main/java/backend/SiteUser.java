@@ -41,7 +41,6 @@ public class SiteUser {
     public static final int HASH_STRENGTH = 12;
 
     public static String encrypt(String unencryptedPassword) {
-        // TODO: Implement encryption.
         String encryptedHash = BCrypt.withDefaults().hashToString(HASH_STRENGTH, unencryptedPassword.toCharArray());
         return encryptedHash;
     }

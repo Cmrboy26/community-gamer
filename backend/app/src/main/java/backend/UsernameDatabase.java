@@ -1,7 +1,6 @@
 package backend;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -123,13 +122,6 @@ public class UsernameDatabase {
     // returns "c = 'v'"
     private String selectQuery(Category c, String v) {
         return c.name().toLowerCase() + " = '"+v+"'";
-    }
-
-    private ResultSet executeQuery(String query) throws SQLException {
-        Connection connection = createConnection();
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(query);
-        return resultSet;
     }
 
     private Connection createConnection() throws SQLException {

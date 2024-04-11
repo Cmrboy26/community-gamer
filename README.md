@@ -3,7 +3,7 @@ A simple, full-stack application for publishing custom game blogs.
 
 ## Project Outline
 The backend half of this application is programmed in Java and utilizes the Spring Boot framework. React was used to develop the frontend of the website. This project began development around March 24th of 2024,
-and the minimal viable product was complete around April 10th, 2024. The project was being worked on concurrently with my rigorous high school classes.
+and the minimal viable product was completed around April 10th, 2024. The project was being worked on concurrently with my rigorous high school classes.
 
 ## Personal Goals
 Throughout developing this project, I wanted to achieve the following goals:
@@ -28,17 +28,18 @@ Throughout developing this project, I wanted to achieve the following goals:
 
 <hr>
 
+(Note: if running on Linux, prepend ``./`` to the beginning of any `gradlew` command)
+
 To run the backend, run these commands:<br>
-`cd backend`, `./gradlew :App:run`<br>
+`cd backend`, `gradlew :App:run`<br>
 
 To run the frontend, run these commands:<br>
 `cd frontend/reactfirst`, (for the first run) `npm install`, `npm start`<br>
 
 ## Tests
-Tests will be included sometime soon.
 
 To test the backend, run these commands:<br>
-`cd backend`, `./gradlew :App:test`<br>
+`cd backend`, `gradlew :App:test`<br>
 
 To test the frontend, run these commands:<br>
 `cd frontend/reactfirst`, (for the first run) `npm install`, `npm test`

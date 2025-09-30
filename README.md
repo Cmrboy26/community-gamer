@@ -1,5 +1,5 @@
 # community-gamer
-A simple, full-stack application for publishing custom game blogs.
+A full-stack web application with secure login/authentication and a blog system for user-generated content. This project was implemented using Spring Boot, React, and MySQL for full-stack functionality. Users can search for specific articles, register an account, and publish custom articles for others to view.
 
 ## Project Outline
 The backend half of this application is programmed in Java and utilizes the Spring Boot framework. React was used to develop the frontend of the website. This project began development around March 24th of 2024,
